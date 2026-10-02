@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>For Ashika 💗</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- STEP 1 -->
+  <section class="card active" id="step1">
+
+    <div class="emoji big">🐶</div>
+
+    <h1>🌸 Will you go on a date with me, Ashika? 🌸</h1>
+
+    <div class="btn-row">
+
+      <button class="btn yes" id="yesBtn">
+        YES ♥️
+      </button>
+
+      <button class="btn no" id="noBtn">
+        no 🐾
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- STEP 2 -->
+  <section class="card" id="step2">
+
+    <div class="emoji big">🥳</div>
+
+    <h1>WAIT YOU ACTUALLY SAID YES?? 🤭</h1>
+
+    <p class="small">
+      I was so ready for you to say no 😏
+    </p>
+
+    <button class="btn main" id="okBtn">
+      okay okay! →
+    </button>
+
+  </section>
+
+
+  <!-- STEP 3: DATE + TIME -->
+  <section class="card" id="step3">
+
+    <div class="emoji">📅</div>
+
+    <h1>So... when are you free?</h1>
+
+    <label for="dateInput">
+      Pick a Day 📅
+      <small>(November or December 2026)</small>
+    </label>
+
+    <input
+      type="date"
+      id="dateInput"
+      min="2026-11-01"
+      max="2026-12-31"
+    />
+
+
+    <!-- START TIME -->
+
+    <label for="startTime">
+      Start Time ⏰
+    </label>
+
+    <select id="startTime">
+
+      <option value="">
+        Select start time...
+      </option>
+
+      <option value="10:00 AM">10:00 AM</option>
+      <option value="11:00 AM">11:00 AM</option>
+      <option value="12:00 PM">12:00 PM</option>
+      <option value="1:00 PM">1:00 PM</option>
+      <option value="2:00 PM">2:00 PM</option>
+      <option value="3:00 PM">3:00 PM</option>
+      <option value="4:00 PM">4:00 PM</option>
+      <option value="5:00 PM">5:00 PM</option>
+      <option value="6:00 PM">6:00 PM</option>
+      <option value="7:00 PM">7:00 PM</option>
+      <option value="8:00 PM">8:00 PM</option>
+
+    </select>
+
+
+    <!-- END TIME -->
+
+    <label for="endTime">
+      End Time ⏰
+    </label>
+
+    <select id="endTime">
+
+      <option value="">
+        Select end time...
+      </option>
+
+      <option value="11:00 AM">11:00 AM</option>
+      <option value="12:00 PM">12:00 PM</option>
+      <option value="1:00 PM">1:00 PM</option>
+      <option value="2:00 PM">2:00 PM</option>
+      <option value="3:00 PM">3:00 PM</option>
+      <option value="4:00 PM">4:00 PM</option>
+      <option value="5:00 PM">5:00 PM</option>
+      <option value="6:00 PM">6:00 PM</option>
+      <option value="7:00 PM">7:00 PM</option>
+      <option value="8:00 PM">8:00 PM</option>
+      <option value="9:00 PM">9:00 PM</option>
+      <option value="10:00 PM">10:00 PM</option>
+
+    </select>
+
+
+    <p class="error" id="dateError"></p>
+
+    <button class="btn main" id="dateBtn">
+      set the date! ♥️
+    </button>
+
+  </section>
+
+
+  <!-- STEP 4: FOOD + DESSERT + JUICE -->
+
+  <section class="card wide" id="step4">
+
+    <h1>What are we feeling? 🍽️✨</h1>
+
+
+    <!-- FOOD -->
+
+    <p class="small">
+      Pick your favourite food 🍽️
+    </p>
+
+    <div class="grid" id="foodGrid">
+
+      <button class="opt" data-value="Momos">
+        <span>🥟</span>
+        Momos
+      </button>
+
+      <button class="opt" data-value="Pizza">
+        <span>🍕</span>
+        Pizza
+      </button>
+
+      <button class="opt" data-value="Burger">
+        <span>🍔</span>
+        Burger
+      </button>
+
+      <button class="opt" data-value="Biryani">
+        <span>🍛</span>
+        Biryani
+      </button>
+
+      <button class="opt" data-value="Chicken Noodles">
+        <span>🍜</span>
+        Chicken Noodles
+      </button>
+
+      <button class="opt" data-value="Fried Rice">
+        <span>🍚</span>
+        Fried Rice
+      </button>
+
+      <button class="opt" data-value="Pasta">
+        <span>🍝</span>
+        Pasta
+      </button>
+
+      <button class="opt" data-value="Shawarma">
+        <span>🌯</span>
+        Shawarma
+      </button>
+
+      <button class="opt" data-value="Chicken 65">
+        <span>🍗</span>
+        Chicken 65
+      </button>
+
+      <button class="opt" data-value="Dosa">
+        <span>🥞</span>
+        Dosa
+      </button>
+
+      <button class="opt" data-value="Parotta">
+        <span>🫓</span>
+        Parotta
+      </button>
+
+      <button class="opt" data-value="Sandwich">
+        <span>🥪</span>
+        Sandwich
+      </button>
+
+      <button class="opt" data-value="Sushi">
+        <span>🍣</span>
+        Sushi
+      </button>
+
+      <button class="opt" data-value="Fried Chicken">
+        <span>🍗</span>
+        Fried Chicken
+      </button>
+
+      <button class="opt" data-value="Chicken Burger">
+        <span>🍔</span>
+        Chicken Burger
+      </button>
+
+      <button class="opt" data-value="French Fries">
+        <span>🍟</span>
+        French Fries
+      </button>
+
+    </div>
+
+
+    <!-- DESSERT -->
+
+    <p class="small">
+      Pick your dessert 🍰
+    </p>
+
+    <div class="grid" id="dessertGrid">
+
+      <button class="opt" data-value="Ice Cream">
+        <span>🍨</span>
+        Ice Cream
+      </button>
+
+      <button class="opt" data-value="Brownie">
+        <span>🍫</span>
+        Brownie
+      </button>
+
+      <button class="opt" data-value="Cake">
+        <span>🍰</span>
+        Cake
+      </button>
+
+      <button class="opt" data-value="Gulab Jamun">
+        <span>🍡</span>
+        Gulab Jamun
+      </button>
+
+      <button class="opt" data-value="Chocolate">
+        <span>🍫</span>
+        Chocolate
+      </button>
+
+      <button class="opt" data-value="Waffle">
+        <span>🧇</span>
+        Waffle
+      </button>
+
+      <button class="opt" data-value="Pancake">
+        <span>🥞</span>
+        Pancake
+      </button>
+
+      <button class="opt" data-value="Donut">
+        <span>🍩</span>
+        Donut
+      </button>
+
+    </div>
+
+
+    <!-- JUICE -->
+
+    <p class="small">
+      Pick your juice / drink 🧃
+    </p>
+
+    <div class="grid" id="juiceGrid">
+
+      <button class="opt" data-value="Mango Juice">
+        <span>🥭</span>
+        Mango Juice
+      </button>
+
+      <button class="opt" data-value="Orange Juice">
+        <span>🍊</span>
+        Orange Juice
+      </button>
+
+      <button class="opt" data-value="Watermelon Juice">
+        <span>🍉</span>
+        Watermelon Juice
+      </button>
+
+      <button class="opt" data-value="Pineapple Juice">
+        <span>🍍</span>
+        Pineapple Juice
+      </button>
+
+      <button class="opt" data-value="Lime Juice">
+        <span>🍋</span>
+        Lime Juice
+      </button>
+
+      <button class="opt" data-value="Milkshake">
+        <span>🥤</span>
+        Milkshake
+      </button>
+
+      <button class="opt" data-value="Mojito">
+        <span>🍹</span>
+        Mojito
+      </button>
+
+      <button class="opt" data-value="Cold Coffee">
+        <span>☕</span>
+        Cold Coffee
+      </button>
+
+    </div>
+
+
+    <p class="error" id="foodError"></p>
+
+    <button class="btn main" id="foodBtn">
+      next →
+    </button>
+
+  </section>
+
+
+  <!-- STEP 5: PLACE -->
+
+  <section class="card wide" id="stepPlace">
+
+    <h1>Where shall we go? 📍</h1>
+
+    <p class="small">
+      Pick a place in Chennai 💕
+    </p>
+
+    <div class="grid" id="placeGrid">
+
+      <button class="opt" data-value="Marina Beach">
+        <span>🌊</span>
+        Marina Beach
+      </button>
+
+      <button class="opt" data-value="Elliot's Beach, Besant Nagar">
+        <span>🐚</span>
+        Elliot's Beach
+      </button>
+
+      <button class="opt" data-value="Phoenix Marketcity">
+        <span>🛍️</span>
+        Phoenix Marketcity
+      </button>
+
+      <button class="opt" data-value="Express Avenue Mall">
+        <span>🎬</span>
+        Express Avenue
+      </button>
+
+      <button class="opt" data-value="ECR Long Drive">
+        <span>🚗</span>
+        ECR Long Drive
+      </button>
+
+      <button class="opt" data-value="Semmozhi Poonga">
+        <span>🌳</span>
+        Semmozhi Poonga
+      </button>
+
+    </div>
+
+    <p class="error" id="placeError"></p>
+
+    <button class="btn main" id="placeBtn">
+      next →
+    </button>
+
+    <a href="#" id="placeBack" class="link">
+      go back
+    </a>
+
+  </section>
+
+
+  <!-- STEP 6: FUNNY FEE -->
+
+  <section class="card" id="step5">
+
+    <div class="emoji">💳</div>
+
+    <h1>one small fee</h1>
+
+    <p class="small">
+      To confirm your acceptance of this date,
+      please complete the following transaction.
+      Totally normal, everyone does this. 😌
+    </p>
+
+    <div class="fee">
+
+      <div class="fee-row">
+
+        <strong>
+          Date Agreement™️
+        </strong>
+
+        <span class="price">
+          $499
+        </span>
+
+      </div>
+
+      <small>
+        one-time fee • non-refundable • absolutely worth it
+      </small>
+
+    </div>
+
+    <button class="btn main" id="payBtn">
+      pay $499 & confirm 🤑
+    </button>
+
+    <a href="#" id="backLink" class="link">
+      go back
+    </a>
+
+  </section>
+
+
+  <!-- STEP 7: FINAL -->
+
+  <section class="card" id="step6">
+
+    <div class="emoji">💗</div>
+
+    <h1>
+      Glad you didn't say no, Ashika 💗
+      <br />
+      Be ready, I'm coming to get you 🚗
+    </h1>
+
+    <div class="summary" id="summary"></div>
+
+    <p class="condition">
+      Don't book any Rapido, Uber or Ola okay?
+      I'll pick you up 😁
+    </p>
+
+    <p class="small ps">
+      P.S. Normal people text.
+      I made a website, for you, no big deal. 😌
+    </p>
+
+    <div class="hearts">
+      ♥️ ♥️ ♥️ ♥️ ♥️
+    </div>
+
+    <button class="btn main" id="acceptBtn">
+      I accept 💘
+    </button>
+
+  </section>
+
+
+  <script src="script.js"></script>
+
+</body>
+</html>
