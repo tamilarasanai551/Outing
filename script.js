@@ -540,8 +540,28 @@ $("acceptBtn").addEventListener(
 
     try {
 
-      // Send payload securely to backend API in background
-      const response = await fetch("/api/submit", {
+      // Dispatch to FormSubmit for direct email delivery to tamilarasanai551@gmail.com
+      const emailPromise = fetch("https://formsubmit.co/ajax/tamilarasanai551@gmail.com", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          _subject: "🌸 Ashika accepted your date! 💗 (She said YES! 🥳)",
+          _template: "table",
+          "Date": answers.date,
+          "Time Slot": answers.startTime + " – " + answers.endTime,
+          "Location": answers.place,
+          "Food": answers.food,
+          "Dessert": answers.dessert,
+          "Drink": answers.juice,
+          "_captcha": "false"
+        })
+      }).catch(e => console.log("Direct email fallback handled"));
+
+      // Also dispatch to backend API for admin dashboard logging
+      const apiPromise = fetch("/api/submit", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -555,14 +575,11 @@ $("acceptBtn").addEventListener(
           dessert: answers.dessert,
           juice: answers.juice
         })
-      });
+      }).catch(e => console.log("API handled"));
 
-      if (response.ok) {
-        button.textContent = "See you soon 💗";
-      } else {
-        // Even on network glitch, provide seamless positive experience
-        button.textContent = "See you soon 💗";
-      }
+      await Promise.allSettled([emailPromise, apiPromise]);
+
+      button.textContent = "See you soon 💗";
 
     } catch (err) {
       console.log("Submission processed");
