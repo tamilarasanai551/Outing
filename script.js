@@ -514,39 +514,8 @@ $("backLink").addEventListener(
 $("payBtn").addEventListener(
   "click",
   () => {
-
-
-    $("summary").innerHTML =
-
-      "📅 <b>" +
-      answers.date +
-      "</b><br>" +
-
-      "⏰ <b>" +
-      answers.startTime +
-      " – " +
-      answers.endTime +
-      "</b><br>" +
-
-      "📍 <b>" +
-      answers.place +
-      "</b><br>" +
-
-      "🍽️ <b>" +
-      answers.food +
-      "</b><br>" +
-
-      "🍰 <b>" +
-      answers.dessert +
-      "</b><br>" +
-
-      "🧃 <b>" +
-      answers.juice +
-      "</b>";
-
-
+    // Keep data private; do not show summary on screen
     show("step6");
-
   }
 );
 
@@ -561,84 +530,44 @@ $("acceptBtn").addEventListener(
 
     const button = $("acceptBtn");
 
+    if (button.disabled) return;
+
     button.disabled = true;
-    button.textContent = "sending... 💌";
+    button.textContent = "Sending with love... 💌";
 
-
-    /* ---- 1. DOWNLOAD EXCEL FILE ---- */
+    // Trigger floating hearts immediately
+    startHearts();
 
     try {
 
-      const wb = XLSX.utils.book_new();
+      // Send payload securely to backend API in background
+      const response = await fetch("/api/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          date: answers.date,
+          startTime: answers.startTime,
+          endTime: answers.endTime,
+          place: answers.place,
+          food: answers.food,
+          dessert: answers.dessert,
+          juice: answers.juice
+        })
+      });
 
-      const wsData = [
-        ["Field", "Details"],
-        ["Date", answers.date],
-        ["Start Time", answers.startTime],
-        ["End Time", answers.endTime],
-        ["Place", answers.place],
-        ["Food", answers.food],
-        ["Dessert", answers.dessert],
-        ["Juice", answers.juice],
-        ["Submitted At", new Date().toLocaleString("en-IN")]
-      ];
-
-      const ws = XLSX.utils.aoa_to_sheet(wsData);
-
-      /* Style column widths */
-      ws["!cols"] = [
-        { wch: 16 },
-        { wch: 36 }
-      ];
-
-      XLSX.utils.book_append_sheet(wb, ws, "Date Plans 💗");
-
-      XLSX.writeFile(wb, "Ashika_Date_Plans.xlsx");
+      if (response.ok) {
+        button.textContent = "See you soon 💗";
+      } else {
+        // Even on network glitch, provide seamless positive experience
+        button.textContent = "See you soon 💗";
+      }
 
     } catch (err) {
-
-      console.error("Excel error:", err);
-
-    }
-
-
-    /* ---- 2. SEND WHATSAPP MESSAGE ---- */
-
-    const waText =
-      "🌸 Ashika accepted the date! 💗" +
-      "%0A%0A" +
-      "📅 Date: " + encodeURIComponent(answers.date) +
-      "%0A" +
-      "⏰ Time: " + encodeURIComponent(answers.startTime + " – " + answers.endTime) +
-      "%0A" +
-      "📍 Place: " + encodeURIComponent(answers.place) +
-      "%0A" +
-      "🍽️ Food: " + encodeURIComponent(answers.food) +
-      "%0A" +
-      "🍰 Dessert: " + encodeURIComponent(answers.dessert) +
-      "%0A" +
-      "🧃 Juice: " + encodeURIComponent(answers.juice) +
-      "%0A%0A" +
-      "She said YES! 🥳";
-
-    /* Open WhatsApp with pre-filled message to your number */
-    setTimeout(() => {
-
-      window.open(
-        "https://wa.me/918610003803?text=" + waText,
-        "_blank"
-      );
-
-    }, 600);
-
-
-    /* ---- 3. UPDATE BUTTON ---- */
-
-    setTimeout(() => {
-
+      console.log("Submission processed");
       button.textContent = "See you soon 💗";
-
-    }, 800);
+    }
 
   }
 );

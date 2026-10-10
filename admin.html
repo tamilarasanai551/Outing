@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Outing Plans 💗</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+  <style>
+    body {
+      padding: 30px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .admin-card {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 24px;
+      padding: 32px 28px;
+      box-shadow: 0 10px 40px rgba(180, 80, 130, 0.2);
+      text-align: left;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px dashed #f1d3e2;
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .admin-header h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      color: #7a1f47;
+    }
+    .btn-action {
+      background: #d4137e;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-action:hover {
+      transform: scale(1.04);
+      background: #b80d6b;
+    }
+    .btn-secondary {
+      background: #6b1f3f;
+    }
+    .table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f6e1ed;
+      text-align: left;
+    }
+    th {
+      background: #fdf2f8;
+      color: #7a1f47;
+      font-weight: bold;
+    }
+    tr:hover {
+      background: #fff8fc;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      background: #fce7f3;
+      color: #be185d;
+    }
+    .login-box {
+      max-width: 400px;
+      margin: 50px auto;
+      text-align: center;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #e4c3d3;
+      margin: 15px 0;
+      font-size: 1rem;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #9a7085;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SECTION -->
+  <div class="admin-card login-box" id="loginBox">
+    <div class="emoji big">🔒</div>
+    <h1>Admin Access</h1>
+    <p class="small">Enter your secret admin password to view submitted responses.</p>
+    <input type="password" id="adminPwd" placeholder="Enter admin password..." />
+    <button class="btn main" id="loginBtn">Login 🌸</button>
+    <p class="error" id="loginError"></p>
+  </div>
+
+  <!-- DASHBOARD SECTION -->
+  <div class="admin-card" id="dashboardBox" style="display: none;">
+    <div class="admin-header">
+      <div>
+        <h1>💗 Ashika's Date Submissions</h1>
+        <p class="small" id="statusCount" style="margin: 4px 0 0;">Loading responses...</p>
+      </div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn-action" id="downloadExcelBtn">📊 Export to Excel</button>
+        <button class="btn-action btn-secondary" id="refreshBtn">🔄 Refresh</button>
+        <button class="btn-action" style="background: #9b59d0;" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table id="submissionsTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time Slot</th>
+            <th>Location</th>
+            <th>Food</th>
+            <th>Dessert</th>
+            <th>Drink</th>
+            <th>Submitted At</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Populated by JS -->
+        </tbody>
+      </table>
+      <div id="emptyState" class="empty-state" style="display: none;">
+        No responses submitted yet! Waiting for Ashika to say YES 💌
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSubmissions = [];
+    let savedToken = localStorage.getItem("outing_admin_token") || "";
+
+    const loginBox = document.getElementById("loginBox");
+    const dashboardBox = document.getElementById("dashboardBox");
+    const loginBtn = document.getElementById("loginBtn");
+    const adminPwd = document.getElementById("adminPwd");
+    const loginError = document.getElementById("loginError");
+    const tableBody = document.getElementById("tableBody");
+    const statusCount = document.getElementById("statusCount");
+    const emptyState = document.getElementById("emptyState");
+
+    async function loadData(token) {
+      try {
+        const res = await fetch("/api/admin", {
+          headers: { "Authorization": "Bearer " + token }
+        });
+        if (!res.ok) {
+          throw new Error("Invalid password");
+        }
+        const data = await res.json();
+        currentSubmissions = data.submissions || [];
+        localStorage.setItem("outing_admin_token", token);
+        renderTable();
+      } catch (err) {
+        localStorage.removeItem("outing_admin_token");
+        loginBox.style.display = "block";
+        dashboardBox.style.display = "none";
+        loginError.textContent = "Incorrect password. Access denied.";
+      }
+    }
+
+    function renderTable() {
+      loginBox.style.display = "none";
+      dashboardBox.style.display = "block";
+      tableBody.innerHTML = "";
+
+      if (currentSubmissions.length === 0) {
+        emptyState.style.display = "block";
+        statusCount.textContent = "Total responses: 0";
+        return;
+      }
+
+      emptyState.style.display = "none";
+      statusCount.textContent = "Total responses received: " + currentSubmissions.length;
+
+      currentSubmissions.forEach(sub => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${sub.date || "N/A"}</strong></td>
+          <td><span class="badge">${sub.startTime || ""} – ${sub.endTime || ""}</span></td>
+          <td>📍 ${sub.place || "N/A"}</td>
+          <td>🍽️ ${sub.food || "N/A"}</td>
+          <td>🍰 ${sub.dessert || "N/A"}</td>
+          <td>🧃 ${sub.juice || "N/A"}</td>
+          <td><small>${sub.submittedAt || "N/A"}</small></td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    loginBtn.addEventListener("click", () => {
+      const pwd = adminPwd.value.trim();
+      if (!pwd) return;
+      loadData(pwd);
+    });
+
+    adminPwd.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") loginBtn.click();
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      const token = localStorage.getItem("outing_admin_token");
+      if (token) loadData(token);
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("outing_admin_token");
+      location.reload();
+    });
+
+    // EXPORT TO EXCEL FEATURE
+    document.getElementById("downloadExcelBtn").addEventListener("click", () => {
+      if (currentSubmissions.length === 0) {
+        alert("No submissions available to export.");
+        return;
+      }
+
+      const rows = [
+        ["Submission ID", "Date", "Start Time", "End Time", "Place", "Food", "Dessert", "Drink", "Submitted At"]
+      ];
+
+      currentSubmissions.forEach(s => {
+        rows.push([
+          s.id || "",
+          s.date || "",
+          s.startTime || "",
+          s.endTime || "",
+          s.place || "",
+          s.food || "",
+          s.dessert || "",
+          s.juice || "",
+          s.submittedAt || ""
+        ]);
+      });
+
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+
+      ws["!cols"] = [
+        { wch: 18 },
+        { wch: 22 },
+        { wch: 12 },
+        { wch: 12 },
+        { wch: 24 },
+        { wch: 16 },
+        { wch: 16 },
+        { wch: 16 },
+        { wch: 22 }
+      ];
+
+      XLSX.utils.book_append_sheet(wb, ws, "Submissions");
+      XLSX.writeFile(wb, "Outing_Date_Submissions.xlsx");
+    });
+
+    // Auto-login if previously authenticated
+    if (savedToken) {
+      loadData(savedToken);
+    }
+  </script>
+</body>
+</html>

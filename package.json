@@ -1,0 +1,14 @@
+{
+  "name": "outing",
+  "version": "1.0.0",
+  "description": "Date invitation site for Ashika",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "engines": {
+    "node": ">=18.x"
+  },
+  "author": "Tamilarasan",
+  "license": "MIT"
+}
