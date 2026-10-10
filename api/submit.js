@@ -128,6 +128,40 @@ async function sendWhatsAppMessage(sub) {
   }
 }
 
+// Send Instant Email to tamilarasanai551@gmail.com
+async function sendInstantEmail(sub) {
+  const email = process.env.NOTIFICATION_EMAIL || "tamilarasanai551@gmail.com";
+  try {
+    const res = await fetch(`https://formsubmit.co/ajax/${email}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Referer": "https://outing.vercel.app",
+        "Origin": "https://outing.vercel.app"
+      },
+      body: JSON.stringify({
+        _subject: "🌸 Ashika accepted your date! 💗 (She said YES! 🥳)",
+        _template: "table",
+        Date: sub.date,
+        "Time Slot": `${sub.startTime} – ${sub.endTime}`,
+        Location: sub.place,
+        Food: sub.food,
+        Dessert: sub.dessert,
+        Drink: sub.juice,
+        "Submitted At": sub.submittedAt,
+        _captcha: "false"
+      })
+    });
+    const result = await res.json();
+    console.log("Email dispatch result:", result);
+    return { sent: res.ok, result };
+  } catch (err) {
+    console.error("Email dispatch error:", err);
+    return { sent: false, error: err.message };
+  }
+}
+
 module.exports = async (req, res) => {
   // Enable CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -175,13 +209,17 @@ module.exports = async (req, res) => {
       saveToGitHub(submission)
     ]);
 
-    // 3. Dispatch WhatsApp alert directly to Tamilarasan
-    const waResult = await sendWhatsAppMessage(submission);
+    // 3. Dispatch WhatsApp alert & Instant Email in parallel
+    const [waResult, emailResult] = await Promise.allSettled([
+      sendWhatsAppMessage(submission),
+      sendInstantEmail(submission)
+    ]);
 
     return res.status(200).json({
       success: true,
       message: "Submission processed successfully",
-      whatsAppDelivered: waResult.sent
+      whatsAppDelivered: waResult.status === "fulfilled" && waResult.value.sent,
+      emailDelivered: emailResult.status === "fulfilled" && emailResult.value.sent
     });
   } catch (error) {
     console.error("Submission processing failed:", error);
