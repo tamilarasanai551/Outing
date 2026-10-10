@@ -559,93 +559,86 @@ $("acceptBtn").addEventListener(
   "click",
   async () => {
 
-    const button =
-      $("acceptBtn");
-
+    const button = $("acceptBtn");
 
     button.disabled = true;
+    button.textContent = "sending... 💌";
 
-    button.textContent =
-      "sending... 💌";
 
+    /* ---- 1. DOWNLOAD EXCEL FILE ---- */
 
     try {
 
-      const response =
-        await fetch(
-          FORM_URL,
-          {
-            method: "POST",
+      const wb = XLSX.utils.book_new();
 
-            headers: {
-              "Content-Type":
-                "application/json",
+      const wsData = [
+        ["Field", "Details"],
+        ["Date", answers.date],
+        ["Start Time", answers.startTime],
+        ["End Time", answers.endTime],
+        ["Place", answers.place],
+        ["Food", answers.food],
+        ["Dessert", answers.dessert],
+        ["Juice", answers.juice],
+        ["Submitted At", new Date().toLocaleString("en-IN")]
+      ];
 
-              "Accept":
-                "application/json"
-            },
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
 
-            body:
-              JSON.stringify({
+      /* Style column widths */
+      ws["!cols"] = [
+        { wch: 16 },
+        { wch: 36 }
+      ];
 
-                _subject:
-                  "Ashika accepted your date! 💗",
+      XLSX.utils.book_append_sheet(wb, ws, "Date Plans 💗");
 
-                message:
-                  "She said YES! 🥳",
+      XLSX.writeFile(wb, "Ashika_Date_Plans.xlsx");
 
-                date:
-                  answers.date,
+    } catch (err) {
 
-                start_time:
-                  answers.startTime,
-
-                end_time:
-                  answers.endTime,
-
-                place:
-                  answers.place,
-
-                food:
-                  answers.food,
-
-                dessert:
-                  answers.dessert,
-
-                juice:
-                  answers.juice
-
-              })
-
-          }
-        );
-
-
-      if (response.ok) {
-
-        button.textContent =
-          "See you soon 💗";
-
-      } else {
-
-        button.textContent =
-          "See you soon 💗";
-
-      }
-
-
-    } catch (error) {
-
-      /*
-        The website still shows the
-        final message even if Formspree
-        isn't connected yet.
-      */
-
-      button.textContent =
-        "See you soon 💗";
+      console.error("Excel error:", err);
 
     }
+
+
+    /* ---- 2. SEND WHATSAPP MESSAGE ---- */
+
+    const waText =
+      "🌸 Ashika accepted the date! 💗" +
+      "%0A%0A" +
+      "📅 Date: " + encodeURIComponent(answers.date) +
+      "%0A" +
+      "⏰ Time: " + encodeURIComponent(answers.startTime + " – " + answers.endTime) +
+      "%0A" +
+      "📍 Place: " + encodeURIComponent(answers.place) +
+      "%0A" +
+      "🍽️ Food: " + encodeURIComponent(answers.food) +
+      "%0A" +
+      "🍰 Dessert: " + encodeURIComponent(answers.dessert) +
+      "%0A" +
+      "🧃 Juice: " + encodeURIComponent(answers.juice) +
+      "%0A%0A" +
+      "She said YES! 🥳";
+
+    /* Open WhatsApp with pre-filled message to your number */
+    setTimeout(() => {
+
+      window.open(
+        "https://wa.me/918610003803?text=" + waText,
+        "_blank"
+      );
+
+    }, 600);
+
+
+    /* ---- 3. UPDATE BUTTON ---- */
+
+    setTimeout(() => {
+
+      button.textContent = "See you soon 💗";
+
+    }, 800);
 
   }
 );
